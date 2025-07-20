@@ -3,14 +3,23 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar(): React.ReactElement {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const location = useLocation();
 
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Browse", path: "/browse" },
     { name: "Favorites", path: "/favorites" },
-    { name: "About", path: "/about" },
     { name: "Contact Us", path: "/contact" },
+    { name: "Categories", path: "/categories" },
+  ];
+
+  const genres = [
+    ["Action", "Music", "Shonen"],
+    ["Adventure", "Romance", "Slice of life"],
+    ["Comedy", "Sci-Fi", "Sports"],
+    ["Drama", "Seinen", "Supernatural"],
+    ["Fantasy", "Shojo", "Thriller"],
   ];
 
   return (
@@ -32,30 +41,68 @@ export default function Navbar(): React.ReactElement {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group overflow-hidden ${
-                  location.pathname === item.path
-                    ? "text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 shadow-lg shadow-purple-500/25"
-                    : "text-white/80 hover:text-white hover:bg-white/10 hover:border-white/20 border border-transparent hover:shadow-md hover:shadow-white/10"
-                }`}
-              >
-                {/* Background glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-300 rounded-lg" />
-                
-                {/* Animated underline for active state */}
-                {location.pathname === item.path && (
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-pulse" />
-                )}
-                
-                {/* Hover underline */}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-3/4 h-0.5 bg-gradient-to-r from-white/50 to-white/50 rounded-full transition-all duration-300" />
-                
-                <span className="relative z-10">{item.name}</span>
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.name === "Categories" ? (
+                <div
+                  key={item.name}
+                  className="relative"
+                  onMouseEnter={() => setIsCategoriesOpen(true)}
+                  onMouseLeave={() => setIsCategoriesOpen(false)}
+                >
+                  <button
+                    className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group overflow-hidden flex items-center gap-1 ${
+                      location.pathname === item.path
+                        ? "text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 shadow-lg shadow-purple-500/25"
+                        : "text-white/80 hover:text-white hover:bg-white/10 hover:border-white/20 border border-transparent hover:shadow-md hover:shadow-white/10"
+                    }`}
+                    aria-haspopup="true"
+                    aria-expanded={isCategoriesOpen}
+                  >
+                    <span className="relative z-10">{item.name}</span>
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                  </button>
+                  {isCategoriesOpen && (
+                    <div className="absolute left-0 mt-2 w-[600px] bg-[#232329] border border-white/10 rounded-lg shadow-2xl z-50 flex text-white animate-fadeIn" style={{minHeight: '220px'}}>
+                      {/* Left column */}
+                      <div className="w-1/3 border-r border-white/10 p-6 flex flex-col gap-4">
+                        <Link to="/categories/all" className="hover:underline">Browse All (A-Z)</Link>
+                        <Link to="/calendar" className="hover:underline">Release Calendar</Link>
+                        <Link to="/music-videos" className="hover:underline">Music Videos & Concerts</Link>
+                      </div>
+                      {/* Right columns: Genres */}
+                      <div className="flex-1 p-6 grid grid-cols-3 gap-x-8">
+                        <div className="col-span-3 mb-2 text-xs text-gray-400 tracking-widest font-semibold">GENRES</div>
+                        {genres.flat().map((genre, idx) => (
+                          <div key={genre} className="mb-2 col-span-1">
+                            <Link to={`/categories/${genre.toLowerCase().replace(/\s+/g, '-')}`} className="hover:underline">{genre}</Link>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group overflow-hidden ${
+                    location.pathname === item.path
+                      ? "text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 shadow-lg shadow-purple-500/25"
+                      : "text-white/80 hover:text-white hover:bg-white/10 hover:border-white/20 border border-transparent hover:shadow-md hover:shadow-white/10"
+                  }`}
+                >
+                  {/* Background glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-300 rounded-lg" />
+                  {/* Animated underline for active state */}
+                  {location.pathname === item.path && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-pulse" />
+                  )}
+                  {/* Hover underline */}
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-3/4 h-0.5 bg-gradient-to-r from-white/50 to-white/50 rounded-full transition-all duration-300" />
+                  <span className="relative z-10">{item.name}</span>
+                </Link>
+              )
+            )}
           </div>
 
           {/* User Actions */}
@@ -120,6 +167,12 @@ export default function Navbar(): React.ReactElement {
           </div>
         )}
       </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </nav>
   );
 }
